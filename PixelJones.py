@@ -1,16 +1,18 @@
 from pico2d import *
 
+from Background import Background
+from player import Player
 
+def reset_world():
+    global world, running, world
 
-def init():
-    global world, character, running, frame, dir, x
-    open_canvas(600, 800)
-    world = load_image('res/background/bg_world.png')
-    character = load_image('res/character/c_m_01_01.png')
-    x = 300
-    dir = 0
     running = True
-    frame = 0
+
+    world = []
+    bg = Background()
+    world.append(bg)
+    player = Player()
+    world.append(player)
 
 
 def handle_events():
@@ -22,31 +24,28 @@ def handle_events():
             running = False
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             running = False
-        elif event.type == SDL_KEYDOWN and event.key == SDLK_a:
-            dir -= 1
-        elif event.type == SDL_KEYDOWN and event.key == SDLK_d:
-            dir += 1
-        elif event.type == SDL_KEYUP:
-            if event.key == SDLK_a:
-                dir += 1
-            elif event.key == SDLK_d:
-                dir -= 1
+        else:
+            player.handle_event(event)
 
-def drawing():
-    global frame
+
+def render_world():
     clear_canvas()
-    world.draw(300,400)
-    character.clip_draw(frame * 154, 670, 170, 170, x, 300, 100, 100)
-    frame = (frame + 1) % 6
+    for o in world:
+        o.draw()
+    update_canvas()
 
+def update_world():
+    for o in world:
+        o.update()
+    pass
 
-init()
+open_canvas()
+reset_world()
 
 while running:
     handle_events()
-    update_canvas()
-    drawing()
-    x += dir * 10
+    update_world()
+    render_world()
     delay(0.1)
 
 close_canvas()
