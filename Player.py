@@ -1,4 +1,4 @@
-from pico2d import load_image
+from pico2d import load_image, get_time
 from sdl2 import SDL_KEYDOWN, SDLK_RIGHT, SDL_KEYUP, SDLK_LEFT
 
 import game_framework
@@ -37,6 +37,28 @@ TIME_PER_ACTION = 0.5
 ACTION_PER_TIME = 1.0 / TIME_PER_ACTION
 FRAMES_PER_ACTION = 8
 
+class Idle:
+    @staticmethod
+    def enter(player, e):
+        player.dir = 0
+        player.frame = 0
+        player.wait_time = get_time()
+        pass
+
+    @staticmethod
+    def exit(player,e):
+        pass
+
+    @staticmethod
+    def do(player):
+        player.frame = (player.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 6
+        if(SDL_KEYDOWN):
+            player.state_machine.handle_event(('RUN', 0))
+
+    @staticmethod
+    def draw(player):
+        player.image.clip_draw(int(player.frame) * 154, player.action * 670, 150, 170, player.x, 100)
+
 
 
 class Run:
@@ -74,13 +96,14 @@ class Run:
 class StateMachine:
     def __init__(self, player):
         self.player = player
-        self.current_state = Run
+        self.current_state = Idle
         self.stateTable = {
-            Run: {}
+            Idle: { right_down: Run, left_down: Run, left_up: Run, right_up: Run },
+            Run: { right_down: Idle, left_down: Idle, right_up: Idle, left_up: Idle}
         }
 
     def start(self):
-        self.current_state.enter(self.player, ('START', 0))
+        self.current_state.enter(self.player, ('NONE', 0))
 
     def update(self):
         self.current_state.do(self.player)
@@ -117,3 +140,4 @@ class Player:
 
     def draw(self):
         self.state_machine.draw()
+
