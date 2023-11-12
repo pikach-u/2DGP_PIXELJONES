@@ -16,8 +16,8 @@ def handle_events():
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
             game_framework.quit()
         elif event.type == SDL_MOUSEBUTTONDOWN and event.button == SDL_BUTTON_LEFT:
-            #game_framework.change_mode(menu_mode)
-            game_framework.change_mode(play_mode)
+            game_framework.change_mode(menu_mode)
+            #game_framework.change_mode(play_mode)
 
 
 

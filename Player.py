@@ -57,7 +57,7 @@ class Idle:
 
     @staticmethod
     def draw(player):
-        player.image.clip_draw(int(player.frame) * 154, 855, 150, 170, player.x, 100)
+        player.image.clip_draw(int(player.frame) * 150, 720, 150, 160, player.x, 100, 80, 80)
 
 
 
@@ -90,7 +90,7 @@ class Run:
     @staticmethod
     def draw(player):
         #player.image.clip_draw(player.frame * 154, player.action * 670, player.x, player.y, 100, 100)
-        player.image.clip_draw(int(player.frame) * 154, player.action * 670, 150, 170, player.x, 100)
+        player.image.clip_draw(int(player.frame) * 150, player.action * 540, 150, 160, player.x, 100, 80, 80)
 
 
 class StateMachine:
@@ -128,7 +128,7 @@ class Player:
         self.frame = 0
         self.dir = 0
         self.action = 1
-        self.image = load_image('res/character/c_m_01_01.png')
+        self.image = load_image('res/character/c_m_01_01_2.png')
         self.state_machine = StateMachine(self)
         self.state_machine.start()
 
