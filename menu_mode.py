@@ -4,6 +4,7 @@ import game_framework
 
 import game_world
 import play_mode
+import title_mode
 from Background import Background
 from Player import Player
 
@@ -14,7 +15,7 @@ def handle_events():
         if event.type == SDL_QUIT:
             game_framework.quit()
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
-            game_framework.quit()
+            game_framework.change_mode(title_mode)
         elif event.type == SDL_MOUSEBUTTONDOWN and event.button == SDL_BUTTON_LEFT:
             if event.x >= 245 and event.x <= 475 and event.y >=370 and event.y <= 435:
                 game_framework.change_mode(play_mode)

@@ -3,6 +3,7 @@ from pico2d import *
 import game_framework
 
 import game_world
+import menu_mode
 from Background import Background
 from Player import Player
 
@@ -13,7 +14,10 @@ def handle_events():
         if event.type == SDL_QUIT:
             game_framework.quit()
         elif event.type == SDL_KEYDOWN and event.key == SDLK_ESCAPE:
-            game_framework.quit()
+            game_framework.change_mode(menu_mode)
+        elif event.type == SDL_MOUSEMOTION:
+            print(event.x)  # road: 237~364
+            print(event.y)
         else:
             player.handle_event(event)
 

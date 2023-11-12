@@ -1,4 +1,4 @@
-from pico2d import load_image, get_time
+from pico2d import load_image, get_time, clamp
 from sdl2 import SDL_KEYDOWN, SDLK_RIGHT, SDL_KEYUP, SDLK_LEFT
 
 import game_framework
@@ -78,12 +78,8 @@ class Run:
     def do(player):
         #player.frame = (player.frame + 1) % 6
         player.x += player.dir * RUN_SPEED_PPS * game_framework.frame_time
+        player.x = clamp(247, player.x, 357)
         player.frame = (player.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 6
-
-        if player.x >= 500:
-            player.x = 500
-        elif player.x <= 100:
-            player.x = 100
 
         pass
 
@@ -140,4 +136,12 @@ class Player:
 
     def draw(self):
         self.state_machine.draw()
+
+    def get_p(self):
+        return self.x-20, self.y-50, self.x+20, self.y+50
+
+    def handle_collision(self, group, other):
+        if group == 'player:obstacle':
+            print('방해물과 충돌!')
+
 
