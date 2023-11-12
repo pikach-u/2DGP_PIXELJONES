@@ -57,7 +57,7 @@ class Idle:
 
     @staticmethod
     def draw(player):
-        player.image.clip_draw(int(player.frame) * 154, player.action * 670, 150, 170, player.x, 100)
+        player.image.clip_draw(int(player.frame) * 154, 855, 150, 170, player.x, 100)
 
 
 
@@ -89,7 +89,7 @@ class Run:
 
     @staticmethod
     def draw(player):
-        #player.image.clip_draw(player.frame * 154, 670, player.x, player.y, 100, 100)
+        #player.image.clip_draw(player.frame * 154, player.action * 670, player.x, player.y, 100, 100)
         player.image.clip_draw(int(player.frame) * 154, player.action * 670, 150, 170, player.x, 100)
 
 
