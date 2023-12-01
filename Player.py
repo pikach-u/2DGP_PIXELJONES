@@ -1,8 +1,9 @@
-from pico2d import load_image, get_time, clamp
+from pico2d import load_image, get_time, clamp, get_canvas_width, get_canvas_height
 #from sdl2 import SDL_KEYDOWN, SDLK_RIGHT, SDL_KEYUP, SDLK_LEFT, SDLK_SPACE
 from sdl2 import *
 
 import game_framework
+import server
 
 
 def right_down(e):
@@ -62,7 +63,7 @@ class Idle:
 
     @staticmethod
     def draw(player):
-        player.image.clip_draw(int(player.frame) * 150, 720, 150, 160, player.x, player.y, 80, 80)
+        player.image.clip_draw(int(player.frame) * 150, 720, 150, 160, player.x, 100, 80, 80)
         # player.image.clip_draw(int(player.frame) * 154, player.action * 178, 154, 178, player.x, 100, 80, 80)
 
 
@@ -92,12 +93,13 @@ class Run:
     @staticmethod
     def draw(player):
         #player.image.clip_draw(player.frame * 154, player.action * 670, player.x, player.y, 100, 100)
-        player.image.clip_draw(int(player.frame) * 150, player.action * 540, 150, 160, player.x, player.y, 80, 80)
+        player.image.clip_draw(int(player.frame) * 150, player.action * 540, 150, 160, player.x, 100, 80, 80)
 
 class SideRun:
     @staticmethod
     def enter(player, e):
-        player.image = load_image('res/character/c_m_01_01_1.png')
+        # player.image = load_image('res/character/c_m_01_01_1.png')
+        player.image = load_image('res/character/c_m_01_02_1.png')
         print('siderun')
         if right_down(e) or left_up(e): # 오른쪽으로 이동
             player.dir, player.action = 1,1
@@ -111,14 +113,14 @@ class SideRun:
     @staticmethod
     def do(player):
         player.x += player.dir * RUN_SPEED_PPS * game_framework.frame_time
-        player.y += player.dir * RUN_SPEED_PPS * game_framework.frame_time
+        player.y += RUN_SPEED_PPS * game_framework.frame_time
         player.x = clamp(247, player.x, 357)
-        player.frame = (player.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 7
+        player.frame = (player.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 6
 
     @staticmethod
     def draw(player):
-        player.image.clip_draw(int(player.frame) * 154, player.action * 155, 154, 178, player.x, 100, 80, 80)
-
+        # player.image.clip_draw(int(player.frame) * 154, player.action * 155, 154, 178, player.x, 100, 80, 80)
+        player.image.clip_draw(int(player.frame) * 150, player.action * 540, 143, 160, player.x, 100, 80, 80)
 
 class StateMachine:
     def __init__(self, player):
@@ -163,13 +165,19 @@ class Player:
 
     def update(self):
         self.state_machine.update()
+        # self.x = clamp(50.0, self.x, server.background.w - 50.0)
+        # self.y = clamp(50.0, self.y, server.background.h - 50.0)
 
     def handle_event(self, event):
         self.state_machine.handle_event(('INPUT', event))
 
     def draw(self):
+        # self.state_machine.draw()
+        # sx = self.x - server.background.window_left
+        # sy = self.y - server.background.window_bottom
+        # sx, sy = get_canvas_width()//2 ,get_canvas_height()//2
         self.state_machine.draw()
-
+        #self.image.clip_draw(int(self.frame) * 150, self.action * 540, 150, 160, sx, sy, 80, 80)
     def get_p(self):
         return self.x-20, self.y-50, self.x+20, self.y+50
 

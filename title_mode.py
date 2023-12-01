@@ -4,7 +4,7 @@ import game_framework
 
 import menu_mode
 import play_mode
-from Background import Background
+from Background import InfiniteBackground as Background
 from Player import Player
 
 def handle_events():

@@ -4,7 +4,8 @@ import game_framework
 
 import game_world
 import menu_mode
-from Background import Background
+import server
+from Background import InfiniteBackground as Background
 from Player import Player
 
 def handle_events():
@@ -19,20 +20,19 @@ def handle_events():
             print(event.x)  # road: 237~364
             print(event.y)
         else:
-            player.handle_event(event)
+            server.player.handle_event(event)
 
 
 def init():
-    global bg
     global player
 
     running = True
 
-    bg = Background()
-    game_world.add_object(bg, 0)
+    server.background = Background()
+    game_world.add_object(server.background, 0)
 
-    player = Player()
-    game_world.add_object(player, 3)
+    server.player = Player()
+    game_world.add_object(server.player, 3)
 
 
 
