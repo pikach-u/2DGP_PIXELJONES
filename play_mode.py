@@ -7,6 +7,7 @@ import menu_mode
 import server
 from Background import InfiniteBackground as Background
 from Player import Player
+from obstacle import Obstacle
 
 def handle_events():
 
@@ -34,6 +35,14 @@ def init():
     server.player = Player()
     game_world.add_object(server.player, 3)
 
+    global obstacles
+    obstacles = [Obstacle(random.randint(100,1500), random.randint(300,500)) for _ in range(10)]
+    game_world.add_objects(obstacles, 2)
+
+    game_world.add_collision_pair('player:obstacles', server.player, None)
+    for obs in obstacles:
+        game_world.add_collision_pair('player:obstacle', None, obs)
+
 
 
 def finish():
@@ -42,6 +51,7 @@ def finish():
 
 def update():
     game_world.update()
+    game_world.handle_collisions()
 
 def draw():
     clear_canvas()
