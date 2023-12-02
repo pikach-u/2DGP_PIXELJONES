@@ -23,11 +23,16 @@ def left_up(e):
 
 
 def time_out(e):
-    return e[0] == 'TIME_OUT' and e[1] == 5.0
+    return e[0] == 'TIME_OUT'
 
 def space_down(e):
-    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_TAB
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_SPACE
 
+def jump_down(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYDOWN and e[1].key == SDLK_c
+
+def jump_up(e):
+    return e[0] == 'INPUT' and e[1].type == SDL_KEYUP and e[1].key == SDLK_c
 
 #Player Run Speed
 PIXEL_PER_METER = (10.0 / 0.3) #10 pixel 30 cm
@@ -52,24 +57,30 @@ class Idle:
 
     @staticmethod
     def exit(player,e):
+        player.dir = 1
+        player.action = 1
         pass
 
     @staticmethod
     def do(player):
         player.frame = (player.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 6
-        player.y += RUN_SPEED_PPS * game_framework.frame_time
+        # player.y += RUN_SPEED_PPS * game_framework.frame_time
         if(SDL_KEYDOWN):
+            player.state_machine.handle_event(('RUN', 0))
+        elif get_time() - player.wait_time > 2:
             player.state_machine.handle_event(('RUN', 0))
 
     @staticmethod
     def draw(player):
-        player.image.clip_draw(int(player.frame) * 150, 720, 150, 160, player.x, 100, 80, 80)
+        player.image.clip_draw(int(player.frame) * 150, 720, 150, 160, player.x, 200, 80, 80)
         # player.image.clip_draw(int(player.frame) * 154, player.action * 178, 154, 178, player.x, 100, 80, 80)
 
 
 class Run:
     @staticmethod
     def enter(player, e):
+        player.image = load_image('res/character/c_m_01_01_2.png')
+        # player.action = 1
         print('enter')
         if right_down(e) or left_up(e): # 오른쪽으로 이동
             player.dir, player.action = 1,1
@@ -93,7 +104,7 @@ class Run:
     @staticmethod
     def draw(player):
         #player.image.clip_draw(player.frame * 154, player.action * 670, player.x, player.y, 100, 100)
-        player.image.clip_draw(int(player.frame) * 150, player.action * 540, 150, 160, player.x, 100, 80, 80)
+        player.image.clip_draw(int(player.frame) * 150, player.action * 540, 150, 160, player.x, 200, 80, 80)
 
 class SideRun:
     @staticmethod
@@ -120,16 +131,45 @@ class SideRun:
     @staticmethod
     def draw(player):
         # player.image.clip_draw(int(player.frame) * 154, player.action * 155, 154, 178, player.x, 100, 80, 80)
-        player.image.clip_draw(int(player.frame) * 150, player.action * 540, 143, 160, player.x, 100, 80, 80)
+        player.image.clip_draw(int(player.frame) * 150, player.action * 540, 143, 160, player.x, 200, 80, 80)
+
+class Jump:
+
+    @staticmethod
+    def enter(player, e):
+        player.image = load_image('res/character/c_m_01_01_2.png')
+        player.action = 1
+        player.frame = 0
+        print('Jump')
+
+    @staticmethod
+    def exit(player, e):
+        # player.action = 1
+        pass
+
+    @staticmethod
+    def do(player):
+        player.x += player.dir * RUN_SPEED_PPS * game_framework.frame_time
+        player.y += RUN_SPEED_PPS * game_framework.frame_time
+        player.x = clamp(247, player.x, 357)
+        # player.frame = (player.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 6
+        pass
+
+    @staticmethod
+    def draw(player):
+        player.image.clip_draw(150, player.action * 375, 150, 160, player.x, 200, 80, 80)
+
 
 class StateMachine:
     def __init__(self, player):
         self.player = player
         self.current_state = Idle
         self.stateTable = {
-            Idle: { right_down: Run, left_down: Run, left_up: Idle, right_up: Idle },
-            Run: { right_down: Run, left_down: Run, right_up: Idle, left_up: Idle, space_down: SideRun},
-            SideRun: { right_down: SideRun, left_down: SideRun, right_up: SideRun, left_up: SideRun, space_down: Run }
+            Idle: { right_down: Run, left_down: Run, space_down: SideRun, jump_down: Jump, jump_up: Run, time_out: Run },
+            # Idle: {time_out: Run},
+            Run: { right_down: Run, left_down: Run, space_down: SideRun, jump_down: Jump, jump_up: Run},
+            SideRun: { right_down: SideRun, left_down: SideRun, right_up: SideRun, left_up: SideRun, space_down: Run },
+            Jump: {jump_down: Jump, jump_up: Run, time_out: Run}
         }
 
     def start(self):
