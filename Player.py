@@ -77,6 +77,10 @@ class Idle:
             player.state_machine.handle_event(('RUN', 0))
         pass
 
+    @staticmethod
+    def draw(player):
+        pass
+
     # @staticmethod
     # def draw(player):
     #     player.image.clip_draw(int(player.frame) * 150, 720, 150, 160, player.x, get_canvas_height()//2, 80, 80)
@@ -96,6 +100,10 @@ class RunLeft:
 
     @staticmethod
     def do(player):
+        pass
+
+    @staticmethod
+    def draw(player):
         pass
 
     # @staticmethod
@@ -123,6 +131,14 @@ class RunRight:
         # player.x = clamp(247, player.x, 357)
         pass
 
+    @staticmethod
+    def draw(player):
+        pass
+
+    @staticmethod
+    def draw(player):
+        pass
+
     # @staticmethod
     # def draw(player):
     #     # player.image.clip_draw(player.frame * 154, player.action * 670, player.x, player.y, 100, 100)
@@ -141,6 +157,10 @@ class RunUp:
 
     @staticmethod
     def do(player):
+        pass
+
+    @staticmethod
+    def draw(player):
         pass
 
 class SideRun:
@@ -178,8 +198,8 @@ class Jump:
 
     @staticmethod
     def enter(player, e):
-        player.action = 1
-        player.frame = 0
+        player.action = 2
+        player.frame = 1
         print('Jump')
 
     @staticmethod
@@ -190,10 +210,6 @@ class Jump:
     def do(player):
         pass
 
-    @staticmethod
-    def draw(player):
-        player.image.clip_draw(150, player.action * 375, 150, 160, player.x, 200, 80, 80)
-
 
 class StateMachine:
     def __init__(self, player):
@@ -201,9 +217,9 @@ class StateMachine:
         self.current_state = Idle
         self.stateTable = {
             Idle: {right_down: RunRight, left_down: RunLeft, left_up: RunRight, right_up: RunLeft, time_out: RunUp},
-            RunLeft: {left_up: RunUp, right_down: RunUp},
-            RunRight: {right_up: RunUp, left_down: RunUp},
-            RunUp: {right_down: RunRight, left_down: RunLeft, left_up: RunRight, right_up: RunLeft},
+            RunLeft: {left_up: RunUp, right_down: RunUp, jump_down: Jump, jump_up: RunUp},
+            RunRight: {right_up: RunUp, left_down: RunUp, jump_down: Jump, jump_up: RunUp},
+            RunUp: {right_down: RunRight, left_down: RunLeft, left_up: RunRight, right_up: RunLeft, jump_down: Jump, jump_up: RunUp},
             # SideRun: {right_down: SideRun, left_down: SideRun, right_up: SideRun, left_up: SideRun, space_down: Run},
             Jump: {jump_up: RunUp, time_out: RunUp}
         }
@@ -228,15 +244,15 @@ class StateMachine:
 
             return False
 
-    # def draw(self):
-    #         self.current_state.draw(self.player)
+    def draw(self):
+            self.current_state.draw(self.player)
 
 
 class Player:
     def __init__(self):
         self.frame = 0
         self.dir = 0
-        self.action = 4
+        self.action = 1
         self.image = load_image('res/character/c_m_01_01_2.png')
         self.state_machine = StateMachine(self)
         self.state_machine.start()
@@ -253,8 +269,12 @@ class Player:
     def draw(self):
         sx, sy = get_canvas_width()//2 , get_canvas_height()//2
         # self.state_machine.draw()
-        self.image.clip_draw(int(self.frame) * 150, self.action * 540, 150, 160, sx, sy, 80, 80)
-        self.image.clip_draw(int(self.frame) * 146, self.action * 540, 150, 160, sx, sy, 80, 80)
+        # self.image.clip_draw(int(self.frame) * 150, self.action * 540, 150, 160, sx, sy, 80, 80)
+
+        if self.state_machine.current_state == Jump:
+            self.image.clip_draw(150, self.action * 177, 145, 175, sx, sy, 80, 80)
+        else:
+            self.image.clip_draw(int(self.frame) * 150, self.action * 177, 145, 175, sx, sy, 80, 80)
 
     def get_p(self):
         return self.x - 20, self.y - 50, self.x + 20, self.y + 50
