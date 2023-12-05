@@ -41,6 +41,7 @@ class InfiniteBackground:
 
 
 
+
     def draw(self):
         self.image.clip_draw_to_origin(self.q3l, self.q3b, self.q3w, self.q3h, 0, 0)                        # quadrant 3
         self.image.clip_draw_to_origin(self.q2l, self.q2b, self.q2w, self.q2h, 0, self.q3h)                 # quadrant 2
@@ -48,8 +49,8 @@ class InfiniteBackground:
         self.image.clip_draw_to_origin(self.q1l, self.q1b, self.q1w, self.q1h, self.q3w, self.q3h)          # quadrant 1
 
     def update(self):
-        self.window_left = int(server.player.x) - self.cw // 2
-        self.window_bottom = int(server.player.y) - self.ch // 2
+        self.window_left = int(server.player.x) - get_canvas_width() // 2
+        self.window_bottom = int(server.player.y) - get_canvas_height() // 2
 
         # quadrant 3
         self.q3l = (int(server.player.x) - self.cw // 2) % self.w

@@ -1,6 +1,6 @@
 import math
 
-from pico2d import load_image, get_time, clamp, get_canvas_width, get_canvas_height
+from pico2d import load_image, get_time, clamp, get_canvas_width, get_canvas_height, draw_rectangle
 # from sdl2 import SDL_KEYDOWN, SDLK_RIGHT, SDL_KEYUP, SDLK_LEFT, SDLK_SPACE
 from sdl2 import *
 
@@ -125,10 +125,6 @@ class RunRight:
 
     @staticmethod
     def do(player):
-        # player.frame = (player.frame + FRAMES_PER_ACTION * ACTION_PER_TIME * game_framework.frame_time) % 6
-        # player.x += player.dir * RUN_SPEED_PPS * game_framework.frame_time
-        # player.y += RUN_SPEED_PPS * game_framework.frame_time
-        # player.x = clamp(247, player.x, 357)
         pass
 
     @staticmethod
@@ -166,14 +162,8 @@ class RunUp:
 class SideRun:
     @staticmethod
     def enter(player, e):
-        # player.image = load_image('res/character/c_m_01_01_1.png')
         player.image = load_image('res/character/c_m_01_02_1.png')
-        RUN_SPEED_KMPH = 1.0
         print('siderun')
-        if right_down(e) or left_up(e):  # 오른쪽으로 이동
-            player.dir, player.action = 1, 1
-        elif left_down(e) or right_up(e):  # 왼쪽으로 이동
-            player.dir, player.action = -1, 1
 
     @staticmethod
     def exit(player, e):
@@ -201,6 +191,7 @@ class Jump:
         player.action = 2
         player.frame = 1
         print('Jump')
+        player.jump_time = get_time()
 
     @staticmethod
     def exit(player, e):
@@ -208,6 +199,9 @@ class Jump:
 
     @staticmethod
     def do(player):
+        if get_time() - player.jump_time > 1.0:
+            player.action = 3
+            player.state_machine.current_state = RunUp
         pass
 
 
@@ -260,13 +254,14 @@ class Player:
 
     def update(self):
         self.state_machine.update()
-        self.x = clamp(235.0, self.x, 365)
+        self.x = clamp(240.0, self.x, 360.0)
         # self.y = clamp(50.0, self.y, server.background.h - 50.0)
 
     def handle_event(self, event):
         self.state_machine.handle_event(('INPUT', event))
 
     def draw(self):
+        global sx, sy
         sx, sy = get_canvas_width()//2 , get_canvas_height()//2
         # self.state_machine.draw()
         # self.image.clip_draw(int(self.frame) * 150, self.action * 540, 150, 160, sx, sy, 80, 80)
@@ -276,8 +271,9 @@ class Player:
         else:
             self.image.clip_draw(int(self.frame) * 150, self.action * 177, 145, 175, sx, sy, 80, 80)
 
+
     def get_p(self):
-        return self.x - 20, self.y - 50, self.x + 20, self.y + 50
+        return self.x - 20, self.y - 40, self.x + 20, self.y
 
     def handle_collision(self, group, other):
         if group == 'player:obstacle':

@@ -36,10 +36,10 @@ def init():
     game_world.add_object(server.player, 3)
 
     global obstacles
-    obstacles = [Obstacle(random.randint(100,1500), random.randint(300,500)) for _ in range(10)]
-    game_world.add_objects(obstacles, 2)
+    obstacles = [Obstacle(random.randint(200,400), random.randint(300,1000)) for _ in range(10)]
+    game_world.add_objects(obstacles, 3)
 
-    game_world.add_collision_pair('player:obstacles', server.player, None)
+    game_world.add_collision_pair('player:obstacle', server.player, None)
     for obs in obstacles:
         game_world.add_collision_pair('player:obstacle', None, obs)
 
