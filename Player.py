@@ -280,3 +280,5 @@ class Player:
             print('방해물과 충돌!')
         elif group == 'player:fire':
             print('damage')
+        elif group == 'player:coin':
+            print('Get Coin')

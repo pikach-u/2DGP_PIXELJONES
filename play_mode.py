@@ -6,6 +6,7 @@ import game_world
 import menu_mode
 import server
 from Background import InfiniteBackground as Background
+from Item import Coin
 from Player import Player
 from obstacle import Obstacle
 
@@ -26,6 +27,7 @@ def handle_events():
 
 def init():
     global player
+    global obstacles
 
     running = True
 
@@ -35,13 +37,20 @@ def init():
     server.player = Player()
     game_world.add_object(server.player, 3)
 
-    global obstacles
     obstacles = [Obstacle(random.randint(200,400), random.randint(300,1000)) for _ in range(10)]
-    game_world.add_objects(obstacles, 3)
+    game_world.add_objects(obstacles, 2)
+
+    coins = [Coin(random.randint(200,400), random.randint(300,1000)) for _ in range(10)]
+    game_world.add_objects(coins, 2)
 
     game_world.add_collision_pair('player:obstacle', server.player, None)
+    game_world.add_collision_pair('player:coin', server.player, None)
+
     for obs in obstacles:
         game_world.add_collision_pair('player:obstacle', None, obs)
+
+    for coin in coins:
+        game_world.add_collision_pair('player:coin', None, coin)
 
 
 
