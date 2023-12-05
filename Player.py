@@ -74,12 +74,12 @@ class Idle:
         # player.y += RUN_SPEED_PPS * game_framework.frame_time
         if (SDL_KEYDOWN):
             player.state_machine.handle_event(('RUN', 0))
-        elif get_time() - player.wait_time > 2:
+        elif get_time() - player.wait_time >= 2:
             player.state_machine.handle_event(('RUN', 0))
 
     @staticmethod
     def draw(player):
-        player.image.clip_draw(int(player.frame) * 150, 720, 150, 160, player.x, 200, 80, 80)
+        player.image.clip_draw(int(player.frame) * 150, 720, 150, 160, player.x, get_canvas_height()//2, 80, 80)
         # player.image.clip_draw(int(player.frame) * 154, player.action * 178, 154, 178, player.x, 100, 80, 80)
 
 
@@ -113,7 +113,7 @@ class Run:
     @staticmethod
     def draw(player):
         # player.image.clip_draw(player.frame * 154, player.action * 670, player.x, player.y, 100, 100)
-        player.image.clip_draw(int(player.frame) * 150, player.action * 540, 150, 160, player.x, 200, 80, 80)
+        player.image.clip_draw(int(player.frame) * 150, player.action * 540, 150, 160, player.x, get_canvas_height()//2, 80, 80)
 
 
 class SideRun:
@@ -208,7 +208,7 @@ class StateMachine:
 
 class Player:
     def __init__(self):
-        self.x, self.y = 300, 300
+        self.x, self.y = get_canvas_width()//2 ,get_canvas_height()//2
         self.frame = 0
         self.dir = 0
         self.action = 1
